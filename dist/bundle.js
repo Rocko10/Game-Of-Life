@@ -21444,19 +21444,24 @@
 	var Board = function (_React$Component) {
 	    _inherits(Board, _React$Component);
 
-	    function Board() {
+	    function Board(props, LENGTH_BOARD) {
 	        _classCallCheck(this, Board);
 
-	        return _possibleConstructorReturn(this, (Board.__proto__ || Object.getPrototypeOf(Board)).apply(this, arguments));
+	        var _this = _possibleConstructorReturn(this, (Board.__proto__ || Object.getPrototypeOf(Board)).call(this, props));
+
+	        _this.LENGTH_BOARD = LENGTH_BOARD;
+	        return _this;
 	    }
 
 	    _createClass(Board, [{
 	        key: 'fillBoard',
 	        value: function fillBoard() {
 
+	            this.LENGTH_BOARD = 36;
 	            var cells = [];
+	            var SIDE = Math.sqrt(this.LENGTH_BOARD);
 
-	            for (var i = 0; i < 100; i++) {
+	            for (var i = 0; i < this.LENGTH_BOARD; i++) {
 	                cells.push(_react2.default.createElement(_Cell2.default, { key: i }));
 	            }
 
@@ -21467,7 +21472,7 @@
 	        value: function render() {
 	            return _react2.default.createElement(
 	                'div',
-	                { className: 'grid', style: STYLES.board },
+	                { style: STYLES.board },
 	                this.fillBoard()
 	            );
 	        }
@@ -21483,8 +21488,10 @@
 
 	    board: {
 	        border: '1px solid black',
-	        width: '500px',
-	        height: '500px'
+	        width: '12%',
+	        margin: 'auto',
+	        textAlign: 'center',
+	        lineHeight: '10px'
 	    }
 
 	};
@@ -21525,7 +21532,7 @@
 	    _createClass(Cell, [{
 	        key: 'render',
 	        value: function render() {
-	            return _react2.default.createElement('span', { className: 'grid__col grid__col--1-of-10 grid__col--no-gutter', style: STYLES.cell });
+	            return _react2.default.createElement('span', { style: STYLES.cell });
 	        }
 	    }]);
 
@@ -21538,10 +21545,10 @@
 	var STYLES = {
 
 	    cell: {
-	        border: '1px solid white',
+	        border: '1px solid blue',
 	        width: '10px',
 	        height: '10px',
-	        backgroundColor: 'black'
+	        display: 'inline-block'
 	    }
 
 	};

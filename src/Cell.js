@@ -14,10 +14,10 @@ export default class Cell extends React.Component{
 const STYLES = {
 
     cell: {
-        border: '1px solid white',
+        border: '1px solid blue',
         width: '10px',
         height: '10px',
-        backgroundColor: 'black'
+        display: 'inline-block'
     }
 
 };
