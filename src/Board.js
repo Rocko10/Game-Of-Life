@@ -1,31 +1,72 @@
 import React from 'react';
 import Cell from './Cell';
 
+const LENGTH_BOARD = 36;
+const SIDE = Math.sqrt(LENGTH_BOARD);
+
 export default class Board extends React.Component{
 
     constructor(props, LENGTH_BOARD){
         super(props);
-        this.LENGTH_BOARD = LENGTH_BOARD;
+        this.state = {
+            cells: []
+        }
+        this.updateBoard = this.updateBoard.bind(this);
+    }
+
+    componentDidMount(){
+        this.fillBoard();
+        this.gameLoop();
     }
 
     fillBoard(){
 
-        this.LENGTH_BOARD = 36;
-        const cells = [];
-        const SIDE = Math.sqrt(this.LENGTH_BOARD);
+        let cells = [];
 
-        for(let i = 0; i < this.LENGTH_BOARD; i++){
-            cells.push(<Cell key={i}/>);
+        for(let i = 0; i < LENGTH_BOARD; i++){
+
+            let cellStatus = Math.floor(Math.random() * 2) === 1 ? 'alive' : 'death';
+
+            cells.push(<Cell key={i} status={cellStatus}/>);
+
         }
 
-        return cells;
+        this.setState({cells});
 
     }
 
+    gameLoop(){
+
+        setInterval(this.updateBoard, 3000);
+
+    }
+
+    updateBoard(){
+
+        let tmpCells = this.state.cells;
+
+        for(let i = 0; i < tmpCells.length; i++){
+
+            if(tmpCells[i].props.status === 'alive'){
+                tmpCells.splice(i, 1, <Cell key={i} status='death'/>);
+            }
+
+            else if(tmpCells[i].props.status === 'death'){
+                tmpCells.splice(i, 1, <Cell key={i} status='alive'/>);
+            }
+
+        }
+
+        this.setState({
+            cells: tmpCells
+        });
+    }
+
     render(){
+
         return(
             <div style={STYLES.board}>
-                {this.fillBoard()}
+                {this.state.cells}
             </div>
         );
     }

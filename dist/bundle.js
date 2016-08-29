@@ -21441,6 +21441,9 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+	var LENGTH_BOARD = 36;
+	var SIDE = Math.sqrt(LENGTH_BOARD);
+
 	var Board = function (_React$Component) {
 	    _inherits(Board, _React$Component);
 
@@ -21449,31 +21452,67 @@
 
 	        var _this = _possibleConstructorReturn(this, (Board.__proto__ || Object.getPrototypeOf(Board)).call(this, props));
 
-	        _this.LENGTH_BOARD = LENGTH_BOARD;
+	        _this.state = {
+	            cells: []
+	        };
+	        _this.updateBoard = _this.updateBoard.bind(_this);
 	        return _this;
 	    }
 
 	    _createClass(Board, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            this.fillBoard();
+	            this.gameLoop();
+	        }
+	    }, {
 	        key: 'fillBoard',
 	        value: function fillBoard() {
 
-	            this.LENGTH_BOARD = 36;
 	            var cells = [];
-	            var SIDE = Math.sqrt(this.LENGTH_BOARD);
 
-	            for (var i = 0; i < this.LENGTH_BOARD; i++) {
-	                cells.push(_react2.default.createElement(_Cell2.default, { key: i }));
+	            for (var i = 0; i < LENGTH_BOARD; i++) {
+
+	                var cellStatus = Math.floor(Math.random() * 2) === 1 ? 'alive' : 'death';
+
+	                cells.push(_react2.default.createElement(_Cell2.default, { key: i, status: cellStatus }));
 	            }
 
-	            return cells;
+	            this.setState({ cells: cells });
+	        }
+	    }, {
+	        key: 'gameLoop',
+	        value: function gameLoop() {
+
+	            setInterval(this.updateBoard, 3000);
+	        }
+	    }, {
+	        key: 'updateBoard',
+	        value: function updateBoard() {
+
+	            var tmpCells = this.state.cells;
+
+	            for (var i = 0; i < tmpCells.length; i++) {
+
+	                if (tmpCells[i].props.status === 'alive') {
+	                    tmpCells.splice(i, 1, _react2.default.createElement(_Cell2.default, { key: i, status: 'death' }));
+	                } else if (tmpCells[i].props.status === 'death') {
+	                    tmpCells.splice(i, 1, _react2.default.createElement(_Cell2.default, { key: i, status: 'alive' }));
+	                }
+	            }
+
+	            this.setState({
+	                cells: tmpCells
+	            });
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
+
 	            return _react2.default.createElement(
 	                'div',
 	                { style: STYLES.board },
-	                this.fillBoard()
+	                this.state.cells
 	            );
 	        }
 	    }]);
@@ -21532,7 +21571,7 @@
 	    _createClass(Cell, [{
 	        key: 'render',
 	        value: function render() {
-	            return _react2.default.createElement('span', { style: STYLES.cell });
+	            return _react2.default.createElement('span', { style: Object.assign(STYLES.cell, STYLES[this.props.status]) });
 	        }
 	    }]);
 
@@ -21549,6 +21588,14 @@
 	        width: '10px',
 	        height: '10px',
 	        display: 'inline-block'
+	    },
+
+	    alive: {
+	        backgroundColor: 'yellow'
+	    },
+
+	    death: {
+	        backgroundColor: 'white'
 	    }
 
 	};

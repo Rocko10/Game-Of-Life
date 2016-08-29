@@ -4,7 +4,7 @@ export default class Cell extends React.Component{
 
     render(){
         return(
-            <span style={STYLES.cell}>
+            <span style={ Object.assign(STYLES.cell, STYLES[this.props.status]) } >
             </span>
         );
     }
@@ -18,6 +18,15 @@ const STYLES = {
         width: '10px',
         height: '10px',
         display: 'inline-block'
+    },
+
+    alive: {
+        backgroundColor: 'yellow'
+    },
+
+    death: {
+        backgroundColor: 'white'
     }
+
 
 };
