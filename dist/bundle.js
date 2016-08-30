@@ -21433,6 +21433,10 @@
 
 	var _Cell2 = _interopRequireDefault(_Cell);
 
+	var _general = __webpack_require__(174);
+
+	var _general2 = _interopRequireDefault(_general);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21441,13 +21445,18 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var LENGTH_BOARD = 36;
+	var mod = __webpack_require__(174)(81);
+
+	var LENGTH_BOARD = 81;
 	var SIDE = Math.sqrt(LENGTH_BOARD);
+	var LEFT_VAL = SIDE - 1;
+
+	/* TODO Setup the game board, by clicking a square, toggle the status of the Cell */
 
 	var Board = function (_React$Component) {
 	    _inherits(Board, _React$Component);
 
-	    function Board(props, LENGTH_BOARD) {
+	    function Board(props) {
 	        _classCallCheck(this, Board);
 
 	        var _this = _possibleConstructorReturn(this, (Board.__proto__ || Object.getPrototypeOf(Board)).call(this, props));
@@ -21456,14 +21465,16 @@
 	            cells: []
 	        };
 	        _this.updateBoard = _this.updateBoard.bind(_this);
+	        _this.startGame = _this.startGame.bind(_this);
+	        _this.stopGame = _this.stopGame.bind(_this);
 	        return _this;
 	    }
 
 	    _createClass(Board, [{
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
+
 	            this.fillBoard();
-	            this.gameLoop();
 	        }
 	    }, {
 	        key: 'fillBoard',
@@ -21482,9 +21493,16 @@
 	        }
 	    }, {
 	        key: 'gameLoop',
-	        value: function gameLoop() {
+	        value: function gameLoop(gameStatus) {
 
-	            setInterval(this.updateBoard, 3000);
+	            if (gameStatus === 'start') {
+	                var timer = setInterval(this.updateBoard, 1000);
+	                sessionStorage.setItem('timer', timer);
+	            }
+	            if (gameStatus === 'stop') {
+	                var _timer = sessionStorage.getItem('timer');
+	                clearInterval(_timer);
+	            }
 	        }
 	    }, {
 	        key: 'updateBoard',
@@ -21494,11 +21512,7 @@
 
 	            for (var i = 0; i < tmpCells.length; i++) {
 
-	                if (tmpCells[i].props.status === 'alive') {
-	                    tmpCells.splice(i, 1, _react2.default.createElement(_Cell2.default, { key: i, status: 'death' }));
-	                } else if (tmpCells[i].props.status === 'death') {
-	                    tmpCells.splice(i, 1, _react2.default.createElement(_Cell2.default, { key: i, status: 'alive' }));
-	                }
+	                this._gameLogic(tmpCells, i);
 	            }
 
 	            this.setState({
@@ -21506,13 +21520,131 @@
 	            });
 	        }
 	    }, {
+	        key: '_gameLogic',
+	        value: function _gameLogic(tmpCells, position) {
+
+	            var nearsValues = mod.getNears(position).map(function (pos) {
+	                return tmpCells[pos].props.status;
+	            });
+
+	            if (tmpCells[position].props.status === 'death') {
+
+	                if (this._willLive(nearsValues)) {
+	                    tmpCells.splice(position, 1, _react2.default.createElement(_Cell2.default, { key: position, status: 'alive' }));
+	                }
+	            } else if (tmpCells[position].props.status === 'alive') {
+
+	                if (this._willDie(nearsValues)) {
+	                    tmpCells.splice(position, 1, _react2.default.createElement(_Cell2.default, { key: position, status: 'death' }));
+	                }
+	            }
+	        }
+	    }, {
+	        key: '_willLive',
+	        value: function _willLive(nearsValues) {
+
+	            var count = 0;
+
+	            var _iteratorNormalCompletion = true;
+	            var _didIteratorError = false;
+	            var _iteratorError = undefined;
+
+	            try {
+	                for (var _iterator = nearsValues[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	                    var val = _step.value;
+
+
+	                    if (val === 'alive') {
+	                        count++;
+	                    }
+	                }
+	            } catch (err) {
+	                _didIteratorError = true;
+	                _iteratorError = err;
+	            } finally {
+	                try {
+	                    if (!_iteratorNormalCompletion && _iterator.return) {
+	                        _iterator.return();
+	                    }
+	                } finally {
+	                    if (_didIteratorError) {
+	                        throw _iteratorError;
+	                    }
+	                }
+	            }
+
+	            return count === 3;
+	        }
+	    }, {
+	        key: '_willDie',
+	        value: function _willDie(nearsValues) {
+
+	            var count = 0;
+
+	            var _iteratorNormalCompletion2 = true;
+	            var _didIteratorError2 = false;
+	            var _iteratorError2 = undefined;
+
+	            try {
+	                for (var _iterator2 = nearsValues[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	                    var val = _step2.value;
+
+
+	                    if (val === 'alive') {
+	                        count++;
+	                    }
+	                }
+	            } catch (err) {
+	                _didIteratorError2 = true;
+	                _iteratorError2 = err;
+	            } finally {
+	                try {
+	                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+	                        _iterator2.return();
+	                    }
+	                } finally {
+	                    if (_didIteratorError2) {
+	                        throw _iteratorError2;
+	                    }
+	                }
+	            }
+
+	            return count !== 2 && count !== 3;
+	        }
+	    }, {
+	        key: 'startGame',
+	        value: function startGame() {
+
+	            this.gameLoop('start');
+	        }
+	    }, {
+	        key: 'stopGame',
+	        value: function stopGame() {
+
+	            this.gameLoop('stop');
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 
 	            return _react2.default.createElement(
 	                'div',
-	                { style: STYLES.board },
-	                this.state.cells
+	                null,
+	                _react2.default.createElement(
+	                    'button',
+	                    { onClick: this.startGame },
+	                    'Start'
+	                ),
+	                _react2.default.createElement(
+	                    'button',
+	                    { onClick: this.stopGame },
+	                    'Stop'
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { style: STYLES.board },
+	                    this.state.cells
+	                )
 	            );
 	        }
 	    }]);
@@ -21599,6 +21731,222 @@
 	    }
 
 	};
+
+/***/ },
+/* 174 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	// const cells = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+	// const cells = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+	// const cells = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
+	// const cells = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35];
+	// const SIDE = Math.sqrt(cells.length);
+	// const SIDE = Math.sqrt(49);
+	// const LEFT_VAL = SIDE - 1;
+
+	module.exports = function (TOTAL_LENGTH) {
+
+	    var LENGTH = TOTAL_LENGTH;
+	    var SIDE = Math.sqrt(LENGTH);
+	    var LEFT_VAL = SIDE - 1;
+
+	    /* constraints */
+	    function isFirstRow(position) {
+
+	        return position < SIDE;
+	    }
+
+	    function isLastRow(position) {
+
+	        var LAST_ROW_FIRST = (SIDE - 1) * SIDE;
+
+	        return position >= LAST_ROW_FIRST;
+	    }
+
+	    function isFirst(position) {
+
+	        return position === 0;
+	    }
+
+	    function isLast(position) {
+
+	        return position === SIDE * SIDE - 1;
+	    }
+	    /* constraints */
+
+	    function getTopTop(position) {
+
+	        if (isFirstRow(position)) {
+	            return null;
+	        }
+
+	        return position - SIDE;
+	    }
+
+	    function getTopRight(position) {
+
+	        if (isFirstRow(position)) {
+	            return null;
+	        }
+
+	        var posible = position - SIDE + 1;
+
+	        if (posible % SIDE !== 0) {
+
+	            return posible;
+	        }
+
+	        return null;
+	    }
+
+	    function getTopLeft(position) {
+
+	        if (isFirstRow(position)) {
+	            return null;
+	        }
+
+	        var posible = position - SIDE - 1;
+
+	        if (posible < 0) {
+	            return null;
+	        }
+
+	        if (posible % SIDE === LEFT_VAL) {
+	            return null;
+	        }
+
+	        return posible;
+	    }
+
+	    function getBottomBottom(position) {
+
+	        if (isLastRow(position)) {
+	            return null;
+	        }
+
+	        return position + SIDE;
+	    }
+
+	    function getBottomRight(position) {
+
+	        if (isLastRow(position)) {
+	            return null;
+	        }
+
+	        var posible = position + SIDE + 1;
+
+	        if (posible % SIDE !== 0) {
+
+	            return posible;
+	        }
+
+	        return null;
+	    }
+
+	    function getBottomLeft(position) {
+
+	        if (isLastRow(position)) {
+	            return null;
+	        }
+
+	        var posible = position + SIDE - 1;
+
+	        if (posible % SIDE === LEFT_VAL) {
+	            return null;
+	        }
+
+	        return posible;
+	    }
+
+	    function getLeft(position) {
+
+	        if (isFirst(position)) {
+	            return null;
+	        }
+
+	        var posible = position - 1;
+
+	        if (posible % SIDE === LEFT_VAL) {
+
+	            return null;
+	        }
+
+	        return posible;
+	    }
+
+	    function getRight(position) {
+
+	        if (isLast(position)) {
+	            return null;
+	        }
+
+	        var posible = position + 1;
+
+	        if (posible % SIDE !== 0) {
+
+	            return posible;
+	        }
+
+	        return null;
+	    }
+
+	    function getNears(position) {
+
+	        var nears = [];
+	        var posible = void 0;
+
+	        if ((posible = getTopTop(position)) !== null) {
+	            nears.push(posible);
+	        }
+
+	        if ((posible = getTopRight(position)) !== null) {
+	            nears.push(posible);
+	        }
+
+	        if ((posible = getTopLeft(position)) !== null) {
+	            nears.push(posible);
+	        }
+
+	        if ((posible = getBottomBottom(position)) !== null) {
+	            nears.push(posible);
+	        }
+
+	        if ((posible = getBottomRight(position)) !== null) {
+	            nears.push(posible);
+	        }
+
+	        if ((posible = getBottomLeft(position)) !== null) {
+	            nears.push(posible);
+	        }
+
+	        if ((posible = getLeft(position)) !== null) {
+	            nears.push(posible);
+	        }
+
+	        if ((posible = getRight(position)) !== null) {
+	            nears.push(posible);
+	        }
+
+	        return nears;
+	    }
+
+	    return {
+	        getNears: getNears
+	    };
+	};
+
+	// console.log(getNears(48));
+	// console.log(getTopLeft(5));
+
+	// console.log(getTopTop(0));
+
+	// for(let i = 0; i < cells.length; i++){
+	//
+	//     console.log('Top top of: ' + i + ' is: ' + getTopRight(i));
+	//
+	// }
 
 /***/ }
 /******/ ]);
