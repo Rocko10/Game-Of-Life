@@ -21553,6 +21553,7 @@
 	    }, {
 	        key: '_mustDie',
 	        value: function _mustDie(cell, nearsValues) {
+
 	            return cell.props.status === 'alive' && this._checkIfWillDie(nearsValues);
 	        }
 	    }, {

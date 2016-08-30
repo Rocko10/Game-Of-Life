@@ -105,7 +105,9 @@ export default class Board extends React.Component{
     }
 
     _mustDie(cell, nearsValues){
+
         return (cell.props.status === 'alive' && this._checkIfWillDie(nearsValues));
+        
     }
 
     _checkIfWillLive(nearsValues){
