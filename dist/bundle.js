@@ -21472,26 +21472,24 @@
 	            this.startGame = this.startGame.bind(this);
 	            this.stopGame = this.stopGame.bind(this);
 	            this.toggleCellStatus = this.toggleCellStatus.bind(this);
+	            this.randomBoard = this.randomBoard.bind(this);
+	            this.initBoard = this.initBoard.bind(this);
 	        }
 	    }, {
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
 
-	            this.fillBoard();
+	            this.initBoard();
 	        }
 	    }, {
-	        key: 'fillBoard',
-	        value: function fillBoard() {
+	        key: 'initBoard',
+	        value: function initBoard() {
 
 	            var cells = [];
 
 	            for (var i = 0; i < LENGTH_BOARD; i++) {
 
-	                var cellStatus = Math.floor(Math.random() * 2) === 1 ? 'alive' : 'death';
-	                /* FIXME */
-	                cellStatus = 'death';
-
-	                cells.push(this._replaceCell(i, cellStatus));
+	                cells.push(this._replaceCell(i, 'death'));
 	            }
 
 	            this.setState({ cells: cells });
@@ -21675,12 +21673,37 @@
 	            });
 	        }
 	    }, {
+	        key: 'randomBoard',
+	        value: function randomBoard() {
+
+	            var cells = [];
+
+	            for (var i = 0; i < LENGTH_BOARD; i++) {
+
+	                var cellStatus = Math.floor(Math.random() * 2) === 1 ? 'alive' : 'death';
+
+	                cells.push(this._replaceCell(i, cellStatus));
+	            }
+
+	            this.setState({ cells: cells });
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 
 	            return _react2.default.createElement(
 	                'div',
 	                null,
+	                _react2.default.createElement(
+	                    'button',
+	                    { onClick: this.initBoard },
+	                    'Clear Board'
+	                ),
+	                _react2.default.createElement(
+	                    'button',
+	                    { onClick: this.randomBoard },
+	                    'Random Board'
+	                ),
 	                _react2.default.createElement(
 	                    'button',
 	                    { onClick: this.startGame },

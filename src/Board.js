@@ -24,26 +24,24 @@ export default class Board extends React.Component{
         this.startGame = this.startGame.bind(this);
         this.stopGame = this.stopGame.bind(this);
         this.toggleCellStatus = this.toggleCellStatus.bind(this);
+        this.randomBoard = this.randomBoard.bind(this);
+        this.initBoard = this.initBoard.bind(this);
 
     }
 
     componentDidMount(){
 
-        this.fillBoard();
+        this.initBoard();
 
     }
 
-    fillBoard(){
+    initBoard(){
 
         let cells = [];
 
         for(let i = 0; i < LENGTH_BOARD; i++){
 
-            let cellStatus = Math.floor(Math.random() * 2) === 1 ? 'alive' : 'death';
-            /* FIXME */
-            cellStatus = 'death';
-
-            cells.push(this._replaceCell(i, cellStatus));
+            cells.push(this._replaceCell(i, 'death'));
 
         }
 
@@ -107,7 +105,7 @@ export default class Board extends React.Component{
     _mustDie(cell, nearsValues){
 
         return (cell.props.status === 'alive' && this._checkIfWillDie(nearsValues));
-        
+
     }
 
     _checkIfWillLive(nearsValues){
@@ -190,10 +188,28 @@ export default class Board extends React.Component{
 
     }
 
+    randomBoard(){
+
+        let cells = [];
+
+        for(let i = 0; i < LENGTH_BOARD; i++){
+
+            let cellStatus = Math.floor(Math.random() * 2) === 1 ? 'alive' : 'death';
+
+            cells.push(this._replaceCell(i, cellStatus));
+
+        }
+
+        this.setState({cells});
+
+    }
+
     render(){
 
         return(
             <div>
+                <button onClick={this.initBoard}>Clear Board</button>
+                <button onClick={this.randomBoard}>Random Board</button>
                 <button onClick={this.startGame}>Start</button>
                 <button onClick={this.stopGame}>Stop</button>
                 <div style={STYLES.board}>
