@@ -1,13 +1,10 @@
 import React from 'react';
 import Cell from './Cell';
-import getNears from './../lab/general';
-var mod = require('./../lab/general')(81);
+var nearFunctions = require('./../local_modules/nearFunctions')(81);
 
 const LENGTH_BOARD = 81;
 const SIDE = Math.sqrt(LENGTH_BOARD);
 const LEFT_VAL = SIDE - 1;
-
-/* TODO Setup the game board, by clicking a square, toggle the status of the Cell */
 
 export default class Board extends React.Component{
 
@@ -16,9 +13,18 @@ export default class Board extends React.Component{
         this.state = {
             cells: []
         }
+
+        this._bindMethods();
+
+    }
+
+    _bindMethods(){
+
         this.updateBoard = this.updateBoard.bind(this);
         this.startGame = this.startGame.bind(this);
         this.stopGame = this.stopGame.bind(this);
+        this.toggleCellStatus = this.toggleCellStatus.bind(this);
+
     }
 
     componentDidMount(){
@@ -34,8 +40,10 @@ export default class Board extends React.Component{
         for(let i = 0; i < LENGTH_BOARD; i++){
 
             let cellStatus = Math.floor(Math.random() * 2) === 1 ? 'alive' : 'death';
+            /* FIXME */
+            cellStatus = 'death';
 
-            cells.push(<Cell key={i} status={cellStatus}/>);
+            cells.push(this._replaceCell(i, cellStatus));
 
         }
 
@@ -59,40 +67,48 @@ export default class Board extends React.Component{
     updateBoard(){
 
         let tmpCells = this.state.cells;
+        let newCells = [];
 
         for(let i = 0; i < tmpCells.length; i++){
-
-            this._gameLogic(tmpCells, i);
-
+            newCells.push(this._getNewCell(tmpCells, i));
         }
 
         this.setState({
-            cells: tmpCells
+            cells: newCells
         });
     }
 
-    _gameLogic(tmpCells, position){
+    _getNewCell(tmpCells, position){
 
-        let nearsValues = mod.getNears(position).map(pos => tmpCells[pos].props.status);
+        let nearsValues = nearFunctions.getNears(position).map(pos => tmpCells[pos].props.status);
 
-        if(tmpCells[position].props.status === 'death'){
+        if(this._mustLive(tmpCells[position], nearsValues)){
 
-            if(this._willLive(nearsValues)){
-                tmpCells.splice(position, 1, <Cell key={position} status='alive'/>);
-            }
+            return this._replaceCell(position, 'alive');
 
         }
-        else if(tmpCells[position].props.status === 'alive'){
 
-            if(this._willDie(nearsValues)){
-                tmpCells.splice(position, 1, <Cell key={position} status='death'/>);
-            }
+        if(this._mustDie(tmpCells[position], nearsValues)){
+
+            return this._replaceCell(position, 'death');
 
         }
+
+        return tmpCells[position];
 
     }
 
-    _willLive(nearsValues){
+    _mustLive(cell, nearsValues){
+
+        return (cell.props.status === 'death' && this._checkIfWillLive(nearsValues));
+
+    }
+
+    _mustDie(cell, nearsValues){
+        return (cell.props.status === 'alive' && this._checkIfWillDie(nearsValues));
+    }
+
+    _checkIfWillLive(nearsValues){
 
         let count = 0;
 
@@ -108,7 +124,7 @@ export default class Board extends React.Component{
 
     }
 
-    _willDie(nearsValues){
+    _checkIfWillDie(nearsValues){
 
         let count = 0;
 
@@ -120,7 +136,24 @@ export default class Board extends React.Component{
 
         }
 
-        return (count !== 2) && (count !== 3);
+        if(count === 2 || count === 3){
+            return false;
+        }
+
+        return true;
+
+    }
+
+    _replaceCell(position, status){
+
+        return (
+            <Cell
+                key={position}
+                position={position}
+                status={status}
+                toggleCellStatus={this.toggleCellStatus}
+            />
+        );
 
     }
 
@@ -133,6 +166,25 @@ export default class Board extends React.Component{
     stopGame(){
 
         this.gameLoop('stop');
+
+    }
+
+    toggleCellStatus(position){
+
+        let tmpCells = this.state.cells;
+        let cellStatus = tmpCells[position].props.status;
+
+        if(cellStatus === 'alive'){
+            tmpCells.splice(position, 1, this._replaceCell(position, 'death'));
+        }
+
+        if(cellStatus === 'death'){
+            tmpCells.splice(position, 1, this._replaceCell(position, 'alive'));
+        }
+
+        this.setState({
+            cells: tmpCells
+        });
 
     }
 

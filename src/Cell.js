@@ -4,7 +4,12 @@ export default class Cell extends React.Component{
 
     render(){
         return(
-            <span style={ Object.assign(STYLES.cell, STYLES[this.props.status]) } >
+            <span
+                onClick={() => {
+                    this.props.toggleCellStatus(this.props.position)
+                }}
+                style={Object.assign(STYLES.cell, STYLES[this.props.status])}
+            >
             </span>
         );
     }
@@ -17,11 +22,12 @@ const STYLES = {
         border: '1px solid blue',
         width: '10px',
         height: '10px',
-        display: 'inline-block'
+        display: 'inline-block',
+        cursor: 'pointer'
     },
 
     alive: {
-        backgroundColor: 'yellow'
+        backgroundColor: 'red'
     },
 
     death: {

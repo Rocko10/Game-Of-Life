@@ -21433,10 +21433,6 @@
 
 	var _Cell2 = _interopRequireDefault(_Cell);
 
-	var _general = __webpack_require__(174);
-
-	var _general2 = _interopRequireDefault(_general);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21445,13 +21441,11 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var mod = __webpack_require__(174)(81);
+	var nearFunctions = __webpack_require__(174)(81);
 
 	var LENGTH_BOARD = 81;
 	var SIDE = Math.sqrt(LENGTH_BOARD);
 	var LEFT_VAL = SIDE - 1;
-
-	/* TODO Setup the game board, by clicking a square, toggle the status of the Cell */
 
 	var Board = function (_React$Component) {
 	    _inherits(Board, _React$Component);
@@ -21464,13 +21458,22 @@
 	        _this.state = {
 	            cells: []
 	        };
-	        _this.updateBoard = _this.updateBoard.bind(_this);
-	        _this.startGame = _this.startGame.bind(_this);
-	        _this.stopGame = _this.stopGame.bind(_this);
+
+	        _this._bindMethods();
+
 	        return _this;
 	    }
 
 	    _createClass(Board, [{
+	        key: '_bindMethods',
+	        value: function _bindMethods() {
+
+	            this.updateBoard = this.updateBoard.bind(this);
+	            this.startGame = this.startGame.bind(this);
+	            this.stopGame = this.stopGame.bind(this);
+	            this.toggleCellStatus = this.toggleCellStatus.bind(this);
+	        }
+	    }, {
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
 
@@ -21485,8 +21488,10 @@
 	            for (var i = 0; i < LENGTH_BOARD; i++) {
 
 	                var cellStatus = Math.floor(Math.random() * 2) === 1 ? 'alive' : 'death';
+	                /* FIXME */
+	                cellStatus = 'death';
 
-	                cells.push(_react2.default.createElement(_Cell2.default, { key: i, status: cellStatus }));
+	                cells.push(this._replaceCell(i, cellStatus));
 	            }
 
 	            this.setState({ cells: cells });
@@ -21509,39 +21514,50 @@
 	        value: function updateBoard() {
 
 	            var tmpCells = this.state.cells;
+	            var newCells = [];
 
 	            for (var i = 0; i < tmpCells.length; i++) {
-
-	                this._gameLogic(tmpCells, i);
+	                newCells.push(this._getNewCell(tmpCells, i));
 	            }
 
 	            this.setState({
-	                cells: tmpCells
+	                cells: newCells
 	            });
 	        }
 	    }, {
-	        key: '_gameLogic',
-	        value: function _gameLogic(tmpCells, position) {
+	        key: '_getNewCell',
+	        value: function _getNewCell(tmpCells, position) {
 
-	            var nearsValues = mod.getNears(position).map(function (pos) {
+	            var nearsValues = nearFunctions.getNears(position).map(function (pos) {
 	                return tmpCells[pos].props.status;
 	            });
 
-	            if (tmpCells[position].props.status === 'death') {
+	            if (this._mustLive(tmpCells[position], nearsValues)) {
 
-	                if (this._willLive(nearsValues)) {
-	                    tmpCells.splice(position, 1, _react2.default.createElement(_Cell2.default, { key: position, status: 'alive' }));
-	                }
-	            } else if (tmpCells[position].props.status === 'alive') {
-
-	                if (this._willDie(nearsValues)) {
-	                    tmpCells.splice(position, 1, _react2.default.createElement(_Cell2.default, { key: position, status: 'death' }));
-	                }
+	                return this._replaceCell(position, 'alive');
 	            }
+
+	            if (this._mustDie(tmpCells[position], nearsValues)) {
+
+	                return this._replaceCell(position, 'death');
+	            }
+
+	            return tmpCells[position];
 	        }
 	    }, {
-	        key: '_willLive',
-	        value: function _willLive(nearsValues) {
+	        key: '_mustLive',
+	        value: function _mustLive(cell, nearsValues) {
+
+	            return cell.props.status === 'death' && this._checkIfWillLive(nearsValues);
+	        }
+	    }, {
+	        key: '_mustDie',
+	        value: function _mustDie(cell, nearsValues) {
+	            return cell.props.status === 'alive' && this._checkIfWillDie(nearsValues);
+	        }
+	    }, {
+	        key: '_checkIfWillLive',
+	        value: function _checkIfWillLive(nearsValues) {
 
 	            var count = 0;
 
@@ -21576,8 +21592,8 @@
 	            return count === 3;
 	        }
 	    }, {
-	        key: '_willDie',
-	        value: function _willDie(nearsValues) {
+	        key: '_checkIfWillDie',
+	        value: function _checkIfWillDie(nearsValues) {
 
 	            var count = 0;
 
@@ -21609,7 +21625,22 @@
 	                }
 	            }
 
-	            return count !== 2 && count !== 3;
+	            if (count === 2 || count === 3) {
+	                return false;
+	            }
+
+	            return true;
+	        }
+	    }, {
+	        key: '_replaceCell',
+	        value: function _replaceCell(position, status) {
+
+	            return _react2.default.createElement(_Cell2.default, {
+	                key: position,
+	                position: position,
+	                status: status,
+	                toggleCellStatus: this.toggleCellStatus
+	            });
 	        }
 	    }, {
 	        key: 'startGame',
@@ -21622,6 +21653,25 @@
 	        value: function stopGame() {
 
 	            this.gameLoop('stop');
+	        }
+	    }, {
+	        key: 'toggleCellStatus',
+	        value: function toggleCellStatus(position) {
+
+	            var tmpCells = this.state.cells;
+	            var cellStatus = tmpCells[position].props.status;
+
+	            if (cellStatus === 'alive') {
+	                tmpCells.splice(position, 1, this._replaceCell(position, 'death'));
+	            }
+
+	            if (cellStatus === 'death') {
+	                tmpCells.splice(position, 1, this._replaceCell(position, 'alive'));
+	            }
+
+	            this.setState({
+	                cells: tmpCells
+	            });
 	        }
 	    }, {
 	        key: 'render',
@@ -21703,7 +21753,14 @@
 	    _createClass(Cell, [{
 	        key: 'render',
 	        value: function render() {
-	            return _react2.default.createElement('span', { style: Object.assign(STYLES.cell, STYLES[this.props.status]) });
+	            var _this2 = this;
+
+	            return _react2.default.createElement('span', {
+	                onClick: function onClick() {
+	                    _this2.props.toggleCellStatus(_this2.props.position);
+	                },
+	                style: Object.assign(STYLES.cell, STYLES[this.props.status])
+	            });
 	        }
 	    }]);
 
@@ -21719,11 +21776,12 @@
 	        border: '1px solid blue',
 	        width: '10px',
 	        height: '10px',
-	        display: 'inline-block'
+	        display: 'inline-block',
+	        cursor: 'pointer'
 	    },
 
 	    alive: {
-	        backgroundColor: 'yellow'
+	        backgroundColor: 'red'
 	    },
 
 	    death: {
@@ -21737,14 +21795,6 @@
 /***/ function(module, exports) {
 
 	'use strict';
-
-	// const cells = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-	// const cells = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-	// const cells = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
-	// const cells = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35];
-	// const SIDE = Math.sqrt(cells.length);
-	// const SIDE = Math.sqrt(49);
-	// const LEFT_VAL = SIDE - 1;
 
 	module.exports = function (TOTAL_LENGTH) {
 
@@ -21936,17 +21986,6 @@
 	        getNears: getNears
 	    };
 	};
-
-	// console.log(getNears(48));
-	// console.log(getTopLeft(5));
-
-	// console.log(getTopTop(0));
-
-	// for(let i = 0; i < cells.length; i++){
-	//
-	//     console.log('Top top of: ' + i + ' is: ' + getTopRight(i));
-	//
-	// }
 
 /***/ }
 /******/ ]);
