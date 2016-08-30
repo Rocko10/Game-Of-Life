@@ -78,15 +78,15 @@ export default class Board extends React.Component{
 
     _getNewCell(tmpCells, position){
 
-        let nearsValues = nearFunctions.getNears(position).map(pos => tmpCells[pos].props.status);
+        let nearsStatus = nearFunctions.getNears(position).map(pos => tmpCells[pos].props.status);
 
-        if(this._mustLive(tmpCells[position], nearsValues)){
+        if(this._mustLive(tmpCells[position], nearsStatus)){
 
             return this._replaceCell(position, 'alive');
 
         }
 
-        if(this._mustDie(tmpCells[position], nearsValues)){
+        if(this._mustDie(tmpCells[position], nearsStatus)){
 
             return this._replaceCell(position, 'death');
 
@@ -96,23 +96,23 @@ export default class Board extends React.Component{
 
     }
 
-    _mustLive(cell, nearsValues){
+    _mustLive(cell, nearsStatus){
 
-        return (cell.props.status === 'death' && this._checkIfWillLive(nearsValues));
-
-    }
-
-    _mustDie(cell, nearsValues){
-
-        return (cell.props.status === 'alive' && this._checkIfWillDie(nearsValues));
+        return (cell.props.status === 'death' && this._checkIfWillLive(nearsStatus));
 
     }
 
-    _checkIfWillLive(nearsValues){
+    _mustDie(cell, nearsStatus){
+
+        return (cell.props.status === 'alive' && this._checkIfWillDie(nearsStatus));
+
+    }
+
+    _checkIfWillLive(nearsStatus){
 
         let count = 0;
 
-        for(let val of nearsValues){
+        for(let val of nearsStatus){
 
             if(val === 'alive'){
                 count++;
@@ -124,11 +124,11 @@ export default class Board extends React.Component{
 
     }
 
-    _checkIfWillDie(nearsValues){
+    _checkIfWillDie(nearsStatus){
 
         let count = 0;
 
-        for(let val of nearsValues){
+        for(let val of nearsStatus){
 
             if(val === 'alive'){
                 count++;

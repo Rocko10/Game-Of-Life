@@ -21526,16 +21526,16 @@
 	        key: '_getNewCell',
 	        value: function _getNewCell(tmpCells, position) {
 
-	            var nearsValues = nearFunctions.getNears(position).map(function (pos) {
+	            var nearsStatus = nearFunctions.getNears(position).map(function (pos) {
 	                return tmpCells[pos].props.status;
 	            });
 
-	            if (this._mustLive(tmpCells[position], nearsValues)) {
+	            if (this._mustLive(tmpCells[position], nearsStatus)) {
 
 	                return this._replaceCell(position, 'alive');
 	            }
 
-	            if (this._mustDie(tmpCells[position], nearsValues)) {
+	            if (this._mustDie(tmpCells[position], nearsStatus)) {
 
 	                return this._replaceCell(position, 'death');
 	            }
@@ -21544,19 +21544,19 @@
 	        }
 	    }, {
 	        key: '_mustLive',
-	        value: function _mustLive(cell, nearsValues) {
+	        value: function _mustLive(cell, nearsStatus) {
 
-	            return cell.props.status === 'death' && this._checkIfWillLive(nearsValues);
+	            return cell.props.status === 'death' && this._checkIfWillLive(nearsStatus);
 	        }
 	    }, {
 	        key: '_mustDie',
-	        value: function _mustDie(cell, nearsValues) {
+	        value: function _mustDie(cell, nearsStatus) {
 
-	            return cell.props.status === 'alive' && this._checkIfWillDie(nearsValues);
+	            return cell.props.status === 'alive' && this._checkIfWillDie(nearsStatus);
 	        }
 	    }, {
 	        key: '_checkIfWillLive',
-	        value: function _checkIfWillLive(nearsValues) {
+	        value: function _checkIfWillLive(nearsStatus) {
 
 	            var count = 0;
 
@@ -21565,7 +21565,7 @@
 	            var _iteratorError = undefined;
 
 	            try {
-	                for (var _iterator = nearsValues[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	                for (var _iterator = nearsStatus[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 	                    var val = _step.value;
 
 
@@ -21592,7 +21592,7 @@
 	        }
 	    }, {
 	        key: '_checkIfWillDie',
-	        value: function _checkIfWillDie(nearsValues) {
+	        value: function _checkIfWillDie(nearsStatus) {
 
 	            var count = 0;
 
@@ -21601,7 +21601,7 @@
 	            var _iteratorError2 = undefined;
 
 	            try {
-	                for (var _iterator2 = nearsValues[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	                for (var _iterator2 = nearsStatus[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
 	                    var val = _step2.value;
 
 
