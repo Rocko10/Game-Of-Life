@@ -1,4 +1,4 @@
-# Game-Of-Life
+# The-Game-Of-Life
 This is my implementation of The Game of Life created John Horton Conway.
 
 You can start and stop the game, generate a random board, or customize it by clicking in the cells (board rectangles).
