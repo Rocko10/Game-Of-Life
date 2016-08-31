@@ -19,19 +19,20 @@ export default class Cell extends React.Component{
 const STYLES = {
 
     cell: {
-        border: '1px solid blue',
-        width: '10px',
+        border: '1px solid #222222',
         height: '10px',
-        display: 'inline-block',
-        cursor: 'pointer'
+        width: '10px',
+        cursor: 'pointer',
+        borderRadius: '100%',
+        display: 'inline-block'
     },
 
     alive: {
-        backgroundColor: 'red'
+        backgroundColor: '#00D8FF'
     },
 
     death: {
-        backgroundColor: 'white'
+        backgroundColor: '#222222'
     }
 
 

@@ -1,10 +1,11 @@
 import React from 'react';
 import Cell from './Cell';
-var nearFunctions = require('./../local_modules/nearFunctions')(81);
+var nearFunctions = require('./../local_modules/nearFunctions')(1681);
 
-const LENGTH_BOARD = 81;
+const LENGTH_BOARD = 1681;
 const SIDE = Math.sqrt(LENGTH_BOARD);
 const LEFT_VAL = SIDE - 1;
+const SPEED = 1000;
 
 export default class Board extends React.Component{
 
@@ -52,7 +53,7 @@ export default class Board extends React.Component{
     gameLoop(gameStatus){
 
         if(gameStatus === 'start'){
-            let timer = setInterval(this.updateBoard, 1000);
+            let timer = setInterval(this.updateBoard, SPEED);
             sessionStorage.setItem('timer', timer);
         }
         if(gameStatus === 'stop'){
@@ -207,11 +208,15 @@ export default class Board extends React.Component{
     render(){
 
         return(
-            <div>
-                <button onClick={this.initBoard}>Clear Board</button>
-                <button onClick={this.randomBoard}>Random Board</button>
-                <button onClick={this.startGame}>Start</button>
-                <button onClick={this.stopGame}>Stop</button>
+            <div style={STYLES.container}>
+                <h1 style={STYLES.pull}>The Game of Life</h1>
+                <p style={STYLES.pull}>Created by John Horton Conway</p>
+                <p style={STYLES.pull}>This implementation was made by Marco Antonio Nuñez Perez</p>
+                <br/>
+                <button style={STYLES.btn} onClick={this.startGame}>Start</button>
+                <button style={STYLES.btn} onClick={this.stopGame}>Stop</button>
+                <button style={STYLES.btn} onClick={this.randomBoard}>Random Board</button>
+                <button style={STYLES.btn} onClick={this.initBoard}>Clear Board</button>
                 <div style={STYLES.board}>
                     {this.state.cells}
                 </div>
@@ -224,11 +229,28 @@ export default class Board extends React.Component{
 const STYLES = {
 
     board: {
-        border: '1px solid black',
-        width: '12%',
+        lineHeight: '13px',
+        width: '500px',
+        height: '500px',
+        margin: 'auto',
+        marginTop: '5px'
+    },
+    btn: {
+        padding: '4px 15px',
+        backgroundColor: '#2196F3',
+        border: '1px solid #2196F3',
+        color: 'white',
+        fontWeight: 'bold',
+        marginRight: '5px',
+        cursor: 'pointer'
+    },
+    container: {
         margin: 'auto',
         textAlign: 'center',
-        lineHeight: '10px'
+        marginTop: '-22px'
+    },
+    pull: {
+        marginBottom: '-12px'
     }
 
 };

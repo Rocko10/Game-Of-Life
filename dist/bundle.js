@@ -21441,11 +21441,12 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var nearFunctions = __webpack_require__(174)(81);
+	var nearFunctions = __webpack_require__(174)(1681);
 
-	var LENGTH_BOARD = 81;
+	var LENGTH_BOARD = 1681;
 	var SIDE = Math.sqrt(LENGTH_BOARD);
 	var LEFT_VAL = SIDE - 1;
+	var SPEED = 1000;
 
 	var Board = function (_React$Component) {
 	    _inherits(Board, _React$Component);
@@ -21499,7 +21500,7 @@
 	        value: function gameLoop(gameStatus) {
 
 	            if (gameStatus === 'start') {
-	                var timer = setInterval(this.updateBoard, 1000);
+	                var timer = setInterval(this.updateBoard, SPEED);
 	                sessionStorage.setItem('timer', timer);
 	            }
 	            if (gameStatus === 'stop') {
@@ -21693,26 +21694,42 @@
 
 	            return _react2.default.createElement(
 	                'div',
-	                null,
+	                { style: STYLES.container },
 	                _react2.default.createElement(
-	                    'button',
-	                    { onClick: this.initBoard },
-	                    'Clear Board'
+	                    'h1',
+	                    { style: STYLES.pull },
+	                    'The Game of Life'
 	                ),
 	                _react2.default.createElement(
-	                    'button',
-	                    { onClick: this.randomBoard },
-	                    'Random Board'
+	                    'p',
+	                    { style: STYLES.pull },
+	                    'Created by John Horton Conway'
 	                ),
 	                _react2.default.createElement(
+	                    'p',
+	                    { style: STYLES.pull },
+	                    'This implementation was made by Marco Antonio Nuñez Perez'
+	                ),
+	                _react2.default.createElement('br', null),
+	                _react2.default.createElement(
 	                    'button',
-	                    { onClick: this.startGame },
+	                    { style: STYLES.btn, onClick: this.startGame },
 	                    'Start'
 	                ),
 	                _react2.default.createElement(
 	                    'button',
-	                    { onClick: this.stopGame },
+	                    { style: STYLES.btn, onClick: this.stopGame },
 	                    'Stop'
+	                ),
+	                _react2.default.createElement(
+	                    'button',
+	                    { style: STYLES.btn, onClick: this.randomBoard },
+	                    'Random Board'
+	                ),
+	                _react2.default.createElement(
+	                    'button',
+	                    { style: STYLES.btn, onClick: this.initBoard },
+	                    'Clear Board'
 	                ),
 	                _react2.default.createElement(
 	                    'div',
@@ -21732,11 +21749,28 @@
 	var STYLES = {
 
 	    board: {
-	        border: '1px solid black',
-	        width: '12%',
+	        lineHeight: '13px',
+	        width: '500px',
+	        height: '500px',
+	        margin: 'auto',
+	        marginTop: '5px'
+	    },
+	    btn: {
+	        padding: '4px 15px',
+	        backgroundColor: '#2196F3',
+	        border: '1px solid #2196F3',
+	        color: 'white',
+	        fontWeight: 'bold',
+	        marginRight: '5px',
+	        cursor: 'pointer'
+	    },
+	    container: {
 	        margin: 'auto',
 	        textAlign: 'center',
-	        lineHeight: '10px'
+	        marginTop: '-22px'
+	    },
+	    pull: {
+	        marginBottom: '-12px'
 	    }
 
 	};
@@ -21797,19 +21831,20 @@
 	var STYLES = {
 
 	    cell: {
-	        border: '1px solid blue',
-	        width: '10px',
+	        border: '1px solid #222222',
 	        height: '10px',
-	        display: 'inline-block',
-	        cursor: 'pointer'
+	        width: '10px',
+	        cursor: 'pointer',
+	        borderRadius: '100%',
+	        display: 'inline-block'
 	    },
 
 	    alive: {
-	        backgroundColor: 'red'
+	        backgroundColor: '#00D8FF'
 	    },
 
 	    death: {
-	        backgroundColor: 'white'
+	        backgroundColor: '#222222'
 	    }
 
 	};
