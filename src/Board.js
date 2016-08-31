@@ -5,7 +5,7 @@ var nearFunctions = require('./../local_modules/nearFunctions')(1681);
 const LENGTH_BOARD = 1681;
 const SIDE = Math.sqrt(LENGTH_BOARD);
 const LEFT_VAL = SIDE - 1;
-const SPEED = 1000;
+const SPEED = 500;
 
 export default class Board extends React.Component{
 
@@ -238,7 +238,7 @@ const STYLES = {
     btn: {
         padding: '4px 15px',
         backgroundColor: '#2196F3',
-        border: '1px solid #2196F3',
+        border: '1px solid #B2EBF2',
         color: 'white',
         fontWeight: 'bold',
         marginRight: '5px',

@@ -21446,7 +21446,7 @@
 	var LENGTH_BOARD = 1681;
 	var SIDE = Math.sqrt(LENGTH_BOARD);
 	var LEFT_VAL = SIDE - 1;
-	var SPEED = 1000;
+	var SPEED = 500;
 
 	var Board = function (_React$Component) {
 	    _inherits(Board, _React$Component);
@@ -21758,7 +21758,7 @@
 	    btn: {
 	        padding: '4px 15px',
 	        backgroundColor: '#2196F3',
-	        border: '1px solid #2196F3',
+	        border: '1px solid #B2EBF2',
 	        color: 'white',
 	        fontWeight: 'bold',
 	        marginRight: '5px',
