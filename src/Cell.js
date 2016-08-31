@@ -8,7 +8,7 @@ export default class Cell extends React.Component{
                 onClick={() => {
                     this.props.toggleCellStatus(this.props.position)
                 }}
-                style={Object.assign(STYLES.cell, STYLES[this.props.status])}
+                style={Object.assign({}, STYLES.cell, STYLES[this.props.status])}
             >
             </span>
         );

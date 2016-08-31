@@ -21817,7 +21817,7 @@
 	                onClick: function onClick() {
 	                    _this2.props.toggleCellStatus(_this2.props.position);
 	                },
-	                style: Object.assign(STYLES.cell, STYLES[this.props.status])
+	                style: Object.assign({}, STYLES.cell, STYLES[this.props.status])
 	            });
 	        }
 	    }]);
